@@ -3,13 +3,16 @@ FROM node:lts-alpine
 RUN apk add --no-cache tini
 
 ENV NODE_ENV production
-USER node
 
 WORKDIR /app
 
-COPY --chown=node:node . ./
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-RUN yarn --network-timeout=100000
+COPY . ./
+
+RUN pnpm install --frozen-lockfile
+
+USER node
 
 EXPOSE 3000
 
